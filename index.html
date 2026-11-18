@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#16407f">
+<title>Rilievi ferroviari</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{color-scheme:light dark;--bg:light-dark(#f3f4f7,#0f1216);--card:light-dark(#fff,#191e25);--ink:light-dark(#14181d,#e9edf2);--mute:light-dark(#5b6470,#9aa4b0);--line:light-dark(#d8dce3,#2c333d);--blue:light-dark(#16407f,#7aa7ff);--blueBg:light-dark(#e6edf9,#1a2a45);--red:light-dark(#b3261e,#ff8a80);--ok:light-dark(#2e7d32,#81c784)}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:clip}
+header{position:sticky;top:0;z-index:5;background:#16407f;color:#fff;padding:10px max(4vw,14px);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;font-weight:800;flex:1 1 auto;line-height:1.2}
+header button{border-color:rgba(255,255,255,.4)}
+#st{font-size:13px;opacity:.85;flex-basis:100%}
+main{max-width:760px;margin:0 auto;padding:14px max(4vw,14px) 90px}
+.note{font-size:13px;color:var(--mute);margin:4px 0 14px}
+h2{font-size:19px;margin:22px 0 10px}
+.types{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.types button{text-align:left;padding:14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;min-height:84px;font:inherit}
+.types b{display:block;font-size:16px;margin-bottom:2px}
+.types span{font-size:13px;color:var(--mute)}
+.vl{display:grid;gap:8px}
+.vr{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 8px 8px 12px}
+.vr div{flex:1;font-size:15px}
+.vr small{display:block;color:var(--mute);font-size:13px}
+.tag{font-size:12px;padding:1px 8px;border-radius:99px;background:var(--blueBg);color:var(--blue);font-weight:600;white-space:nowrap}
+.tag.ok{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
+details{background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:10px}
+summary{cursor:pointer;padding:14px 16px;font-weight:800;font-size:17px;list-style:none;display:flex;gap:8px;min-height:44px;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--blue);font-size:22px;line-height:1;margin-left:auto}
+details[open]>summary::after{content:"–"}
+summary .cnt{font-weight:400;font-size:13px;color:var(--mute)}
+.body{padding:0 16px 16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}
+.f{display:flex;flex-direction:column;gap:4px}
+.f.w,.item,.addrow,.hint,.full{grid-column:1/-1}
+label{font-size:13px;color:var(--mute);font-weight:600}
+input,select,textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;min-height:44px;width:100%}
+textarea{min-height:76px;resize:vertical}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+.tw{display:flex;gap:6px}.tw input{flex:1}
+button{font:inherit;font-size:15px;font-weight:600;min-height:44px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+button.p{background:var(--blue);border-color:var(--blue);color:#fff}
+button.s{padding:6px 10px;font-size:13px}
+button.d{color:var(--red)}
+button:disabled{opacity:.5}
+header button.p{background:#fff;color:#16407f;border-color:#fff}
+header button.ghost{background:transparent;color:#fff}
+.item{border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:8px;padding:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}
+.item h3{grid-column:1/-1;margin:0;font-size:15px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.hint{font-size:13px;color:var(--mute);margin:0}
+.sk canvas{width:100%;height:340px;background:#fff;border:1px solid var(--line);border-radius:8px;touch-action:none;display:block}
+.tools,.bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.tools button[aria-pressed=true]{background:var(--blueBg);border-color:var(--blue)}
+.ph{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.ph figure{margin:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--bg)}
+.ph img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:#ccc}
+.ph figcaption{padding:6px;display:grid;gap:6px}
+.ph figcaption b{font-size:13px}
+.ph input{min-height:40px;padding:8px;font-size:15px}
+label.btn{display:inline-flex;align-items:center;min-height:44px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:15px;font-weight:600;cursor:pointer;position:relative}
+label.btn.p{background:var(--blue);border-color:var(--blue);color:#fff}
+label.btn input{position:absolute;inset:0;opacity:0;width:100%;height:100%}
+#out{width:100%;min-height:320px;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap}
+#mic{width:46px;height:46px;border-radius:50%;border:0;background:#d32f2f;color:#fff;display:grid;place-items:center;padding:0}
+#mic svg{width:22px;height:22px}
+#mic.on{outline:4px solid rgba(255,255,255,.6);outline-offset:2px}
+.tgt{outline:2px dashed #d32f2f!important}
+.endbar{display:grid;gap:8px;margin-top:18px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.endbar .bar{margin:0}
+@media(max-width:600px){.body,.item{grid-template-columns:minmax(0,1fr)}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <button class="ghost s" id="back" hidden>‹ Elenco</button>
+  <h1 id="ttl">Rilievi ferroviari</h1>
+  <button id="mic" aria-label="Detta nel campo selezionato" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+  <button class="p" id="gen" hidden>Genera testo</button>
+  <span id="st"></span>
+</header>
+
+<main id="home">
+  <p class="note">I dati restano solo su questo telefono: nessun invio a server esterni. A fine servizio esporta i verbali, copiali in ufficio e poi eliminali dal telefono.</p>
+  <h2>Nuovo rilievo</h2>
+  <div class="types" id="types"></div>
+  <h2>Riapri un verbale esportato</h2>
+  <div class="bar" style="margin-top:0"><label class="btn">Importa file esportato<input type="file" accept=".html,text/html" multiple id="imp"></label></div>
+  <p class="hint" style="margin-top:6px">Per completare in ufficio un verbale già esportato (protocollo, correzioni): scegli il file verbale_….html.</p>
+  <h2>Verbali su questo telefono</h2>
+  <div class="vl" id="vl"></div>
+  <div class="bar" id="allbar" hidden>
+    <button id="expAll">Esporta tutti i non esportati</button>
+    <button class="d" id="delExp">Elimina gli esportati</button>
+  </div>
+  <p class="hint" id="hm" style="margin-top:8px"></p>
+</main>
+
+<main id="ed" hidden>
+  <p class="note">Fac-simile da adattare alla modulistica del proprio ufficio. I campi vuoti non compaiono nel testo. <span id="mh">Per dettare usa il microfono della tastiera.</span></p>
+  <div id="form"></div>
+
+  <details id="dph"><summary>Fotografie <span class="cnt" id="phn"></span></summary>
+  <div class="body"><div class="full">
+    <div class="bar" style="margin:0 0 10px"><label class="btn p">Scatta foto<input type="file" accept="image/*" capture="environment" id="cam"></label><label class="btn">Dalla galleria<input type="file" accept="image/*" multiple id="gal"></label></div>
+    <p class="hint" id="phm"></p>
+    <div class="ph" id="ph"></div>
+  </div></div></details>
+
+  <details id="dsk"><summary>Schizzo dei luoghi</summary>
+  <div class="body"><div class="full sk">
+    <p class="hint">Disegna col dito: posizione di persone, porte, binario, punti di riferimento.</p>
+    <canvas id="cv"></canvas>
+    <div class="tools">
+      <button class="s" data-t="pen" aria-pressed="true">Penna</button>
+      <button class="s" data-t="rub" aria-pressed="false">Gomma</button>
+      <button class="s" id="undo">Annulla</button>
+      <button class="s d" id="clr">Cancella tutto</button>
+    </div>
+  </div></div></details>
+
+  <details id="dout"><summary>Testo del verbale</summary>
+  <div class="body"><div class="full">
+    <div class="bar" style="margin:0 0 8px"><button class="p" id="share">Condividi</button><button id="copy">Copia testo</button><button id="regen">Rigenera</button></div>
+    <textarea id="out" spellcheck="false" placeholder="Premi «Genera testo» per comporre il verbale dai campi compilati."></textarea>
+    <p class="hint" id="om"></p>
+  </div></div></details>
+
+  <div class="endbar">
+    <div class="bar"><button class="p" id="exp">Esporta file per l'ufficio</button><button class="d" id="del">Elimina dal telefono</button></div>
+    <p class="hint" id="em">L'esportazione salva un file nella cartella Download con dati, testo, schizzo e foto. Si apre con qualsiasi browser sul computer.</p>
+  </div>
+</main>
+
+<script>
+{
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const SN=['','Sì','No'],LUCE=['','Regolare','Scarsa','Assente'],AFF=['','Scarso','Medio','Elevato'],VID=['','Presente','Assente','Non verificato'];
+const METEO=['','Sereno','Nuvoloso','Pioggia','Neve','Nebbia','Vento forte'];
+
+// ---------- sezioni comuni ----------
+const INT={id:'int',t:'Intervento',open:true,f:[['rep','Ufficio / reparto','w'],['prot','Protocollo n.'],['data','Data','date'],['oraSeg','Ora segnalazione','time'],['oraAr','Ora arrivo sul posto','time'],['op','Operatori (qualifica, cognome e nome)','area'],['rich','Segnalazione pervenuta da','sel',['','Capotreno / personale di bordo','Viaggiatore','Sala operativa','112 / NUE','Personale di stazione','Gestore infrastruttura','Iniziativa','Altro']],['richN','Dettagli segnalazione']]};
+const TRENO={id:'tr',t:'Treno',f:[['imp','Impresa ferroviaria'],['cat','Categoria','sel',['','Regionale','Regionale veloce','Intercity','Alta velocità','Notte','Merci','Altro']],['num','Numero treno'],['rel','Relazione (da – a)'],['tratta','Tratta (tra le stazioni di)','w'],['carr','Carrozza n.'],['pos','Posizione a bordo','sel',['','Posto a sedere','Vestibolo','Corridoio','Toilette','Porta di salita','Bagagliaio','Carrozza ristorante','Cabina di guida','Altro']],['posto','Posto n.'],['stato','Treno al momento del fatto','sel',['','In marcia','Fermo in stazione','In partenza','In arrivo','Fermo in linea']],['aff','Affollamento','sel',AFF],['rit','Ritardo causato (min)','num'],['ferm','Stazione dell\'intervento / fermata'],['capo','Capotreno (cognome, nome, matricola)','w'],['macch','Macchinista (cognome, nome, matricola)','w'],['altri','Altro personale di bordo / scorta','w']]};
+const STAZ={id:'sz',t:'Stazione e luogo',f:[['staz','Stazione'],['com','Comune'],['area','Area','sel',['','Marciapiede','Binario / sede ferroviaria','Sottopassaggio','Scale fisse','Scale mobili','Ascensore','Atrio','Sala d\'attesa','Biglietteria','Servizi igienici','Piazzale / parcheggio','Altro']],['bin','Binario n.'],['punto','Punto preciso (riferimenti per ritrovarlo)','area'],['gest','Gestore dell\'area / referente','w'],['pav','Pavimentazione','sel',['','Asciutta','Bagnata','Ghiacciata','Danneggiata','Ingombra']],['luce','Illuminazione','sel',LUCE],['segn','Segnaletica / avvisi presenti','w'],['lav','Lavori in corso','sel',SN],['aff','Affollamento','sel',AFF],['met','Meteo','sel',METEO]]};
+const LES={id:'les',t:'Lesioni e soccorsi',f:[['parte','Lesioni riferite / parte del corpo','w'],['socc','Soccorsi (118: ora richiesta, ora arrivo, mezzo)','w'],['osp','Trasportato a (struttura)'],['prog','Prognosi'],['com','Comunicazioni (impresa ferroviaria, gestore, PM)','area']]};
+const PROV={id:'prov',t:'Provvedimenti',f:[['seq','Sequestri (oggetto, motivo, custode)','area'],['allon','Allontanamento dal treno / accompagnamento','area'],['den','Denunce, arresti, segnalazioni','area'],['pm','PM informato (nome, ora)','w']]};
+const CHI=(r)=>({id:'chi',t:'Chiusura',f:[...(r?[['ripr',r,'time']]:[]),['fine','Fine intervento (ora)','time'],['note','Note','area']]});
+const PERS=(ruoli,extra)=>({t:'Persone',n:'Persona',f:[['ruolo','Ruolo','sel',['',...ruoli]],['nome','Cognome e nome','w'],['nasc','Nato a / il'],['res','Residente in'],['docu','Documento (tipo, n., rilascio)','w'],['tel','Telefono','tel'],...(extra||[]),['dich','Dichiarazione sintetica','area']]});
+const VIOL={t:'Violazioni contestate',n:'Violazione',f:[['art','Norma violata (es. DPR 753/1980, art. …)','w'],['chi','Trasgressore'],['verb','Verbale n.'],['imp','Importo / pagamento']]};
+const TIT=['tit','Titolo di viaggio (tipo, n.)'];
+const ESITO=['esito','Esito','sel',['','Illeso','Ferito','Deceduto']];
+const DESC=(t)=>['descr',t||'Descrizione dei fatti','area'];
+
+// ---------- modelli ----------
+const TPL={
+ evt:{n:'Evento a bordo treno',d:'Aggressioni, liti, viaggiatori senza titolo, furti, molestie e altri fatti a bordo',
+  s:[INT,TRENO,{id:'ev',t:'Evento',f:[['tipo','Tipo di evento','sel',['','Aggressione al personale','Aggressione a viaggiatore','Lite tra viaggiatori','Viaggiatore privo di titolo di viaggio','Rifiuto di fornire le generalità','Molestie','Furto','Danneggiamento','Disturbo / ubriachezza molesta','Oggetto o bagaglio abbandonato','Malore','Altro']],['ora','Ora del fatto','time'],DESC(),['ogg','Oggetti / armi utilizzati','w'],['refu','Beni sottratti / refurtiva','w'],['vid','Videosorveglianza a bordo','sel',VID],['vidN','Richiesta immagini (a chi, quando)']]},PROV,CHI('Ripresa marcia del treno (ora)')],
+  l:{persone:Object.assign(PERS(['Viaggiatore','Parte lesa','Autore presunto','Personale di bordo','Testimone'],[TIT,ESITO]),{after:'ev'}),violazioni:Object.assign({},VIOL,{after:'prov'})},
+  tl:['tr.num','ev.tipo']},
+ inft:{n:'Infortunio a bordo treno',d:'Cadute in salita o discesa, porte, frenate, urti all\'interno del treno',
+  s:[INT,TRENO,{id:'inf',t:'Infortunio',f:[['ora','Ora del fatto','time'],['mom','Momento','sel',['','Salita','Discesa','Durante la marcia','Spostamento tra carrozze','In toilette','Altro']],['din','Dinamica','sel',['','Caduta','Scivolamento','Chiusura porte','Frenata brusca','Urto contro arredi','Caduta di oggetti dalla cappelliera','Malore','Altro']],DESC('Descrizione della dinamica'),['porte','Porte','sel',['','Funzionanti','Anomalia','Non verificato']],['porteN','Segnalazione acustica / luminosa chiusura porte'],['pav','Pavimento','sel',['','Asciutto','Bagnato','Ingombro','Danneggiato']],['luce','Illuminazione','sel',LUCE],['anom','Anomalie o condizioni rilevate','area'],['vid','Videosorveglianza a bordo','sel',VID],['vidN','Richiesta immagini (a chi, quando)']]},LES,PROV,CHI('Ripresa marcia del treno (ora)')],
+  l:{persone:Object.assign(PERS(['Infortunato','Accompagnatore','Personale di bordo','Testimone'],[TIT,ESITO]),{after:'inf'}),violazioni:Object.assign({},VIOL,{after:'prov'})},
+  tl:['tr.num','inf.din']},
+ infs:{n:'Infortunio in stazione',d:'Cadute su marciapiedi, scale, sottopassaggi, tra treno e marciapiede',
+  s:[INT,STAZ,{id:'inf',t:'Infortunio',f:[['ora','Ora del fatto','time'],['din','Dinamica','sel',['','Caduta','Scivolamento','Inciampo','Caduta tra treno e marciapiede','Investimento da treno','Urto','Caduta dalle scale mobili','Malore','Altro']],DESC('Descrizione della dinamica'),['treno','Treno coinvolto (numero, binario)','w'],['anom','Anomalie o condizioni rilevate','area'],['vid','Videosorveglianza di stazione','sel',VID],['vidN','Richiesta immagini (a chi, quando)']]},LES,PROV,CHI()],
+  l:{persone:Object.assign(PERS(['Infortunato','Accompagnatore','Personale di stazione','Testimone'],[ESITO]),{after:'inf'}),violazioni:Object.assign({},VIOL,{after:'prov'})},
+  tl:['sz.staz','inf.din']},
+ dan:{n:'Danneggiamenti e atti vandalici',d:'Vetri, sedili, graffiti, impianti, biglietterie, furti di rame',
+  s:[INT,{id:'lu',t:'Luogo',f:[['dove','Dove','sel',['','A bordo treno','In stazione','Linea / impianti','Deposito / scalo']],['rif','Stazione o treno (numero)'],['com','Comune'],['punto','Punto preciso','area']]},{id:'dn',t:'Danno',f:[['ogg','Bene danneggiato','sel',['','Finestrino / vetro','Sedili','Porte','Toilette','Imbrattamento / graffiti','Impianti / quadri elettrici','Biglietteria automatica','Arredi di stazione','Cavi / rame','Segnalamento','Altro']],['descr','Descrizione del danno','area'],['ent','Entità stimata (€)','num'],['mezzi','Mezzi / strumenti usati','w'],['ora','Ora del fatto o della scoperta','time'],['aut','Autori','sel',['','Ignoti','Identificati','Colti in flagranza']],['vid','Videosorveglianza','sel',VID],['vidN','Richiesta immagini (a chi, quando)'],['prop','Proprietario del bene (ente, referente)','w'],['quer','Denuncia / querela (chi, quando)','w']]},PROV,CHI()],
+  l:{persone:Object.assign(PERS(['Autore presunto','Testimone','Referente del proprietario','Personale']),{after:'dn'}),violazioni:Object.assign({},VIOL,{after:'prov'})},
+  tl:['lu.rif','dn.ogg']},
+ gen:{n:'Sopralluogo generico',d:'Qualsiasi altro rilievo: luogo, persone, foto e descrizione',
+  s:[INT,{id:'lu',t:'Luogo',f:[['luogo','Luogo (stazione, treno, indirizzo)','w'],['com','Comune'],['punto','Punto preciso','area']]},{id:'og',t:'Sopralluogo',f:[['ogg','Oggetto del sopralluogo','w'],['descr','Descrizione','area'],['cond','Condizioni rilevate','area']]},PROV,CHI()],
+  l:{persone:Object.assign(PERS(['Presente','Testimone','Referente','Altro']),{after:'og'}),violazioni:Object.assign({},VIOL,{after:'prov'})},
+  tl:['lu.luogo','og.ogg']}
+};
+
+// ---------- archivio locale (IndexedDB) ----------
+let idb;
+function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open('rilievi',1);r.onupgradeneeded=()=>{const d=r.result;d.createObjectStore('verbali',{keyPath:'id'});const f=d.createObjectStore('foto',{keyPath:'id'});f.createIndex('vid','vid')};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+const tx=(s,m='readonly')=>idb.transaction(s,m).objectStore(s);
+const P=r=>new Promise((res,rej)=>{r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+const getAll=s=>P(tx(s).getAll());
+const put=(s,v)=>P(tx(s,'readwrite').put(v));
+const del=(s,k)=>P(tx(s,'readwrite').delete(k));
+const fotoDi=vid=>P(tx('foto').index('vid').getAll(vid));
+
+let D=null,PH=[],T,order;
+const nid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const fdate=x=>/^\d{4}-\d{2}-\d{2}$/.test(x||'')?x.split('-').reverse().join('/'):(x||'');
+function titleOf(v){const t=TPL[v.type];return[fdate(v.f['int.data']),...t.tl.map(k=>v.f[k])].filter(Boolean).join(' · ')||'Senza dati'}
+let tm;
+function save(){if(!D)return;clearTimeout(tm);tm=setTimeout(async()=>{D.updated=Date.now();D.exported=false;try{await put('verbali',D);$('st').textContent='Salvato sul telefono '+new Date().toTimeString().slice(0,5)}catch(e){$('st').textContent='Salvataggio non riuscito: spazio esaurito?'}},400)}
+
+// ---------- home ----------
+$('types').innerHTML=Object.entries(TPL).map(([k,t])=>`<button data-new="${k}"><b>${t.n}</b><span>${t.d}</span></button>`).join('');
+async function home(){
+ D=null;$('home').hidden=false;$('ed').hidden=true;$('back').hidden=true;$('gen').hidden=true;$('mic').hidden=true;$('ttl').textContent='Rilievi ferroviari';$('st').textContent='';
+ const all=(await getAll('verbali')).sort((a,b)=>b.updated-a.updated);
+ $('vl').innerHTML=all.length?all.map(v=>`<div class="vr"><div>${esc(titleOf(v))}<small>${esc(TPL[v.type]?.n||'')} · modificato ${new Date(v.updated).toLocaleString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</small></div><span class="tag${v.exported?' ok':''}">${v.exported?'Esportato':'Da esportare'}</span><button class="s" data-open="${v.id}">Apri</button></div>`).join(''):'<p class="hint">Nessun verbale salvato su questo telefono.</p>';
+ $('allbar').hidden=!all.length;
+ scrollTo(0,0);
+}
+document.addEventListener('click',async e=>{
+ const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.new){D={id:nid(),type:b.dataset.new,created:Date.now(),updated:Date.now(),exported:false,f:{'int.data':today()},l:{},sk:[]};await put('verbali',D);PH=[];edit()}
+ if(b.dataset.open){D=await P(tx('verbali').get(b.dataset.open));PH=await fotoDi(D.id);edit()}
+});
+$('back').onclick=async()=>{if(D){clearTimeout(tm);D.updated=Date.now();await put('verbali',D).catch(()=>{})}home()};
+
+// ---------- editor ----------
+function field(fd,val,path){
+ const[k,lab,ty,opt]=fd;const id=path+'-'+k;const w=(ty==='w'||ty==='area')?' w':'';let inp;
+ if(ty==='sel')inp=`<select id="${id}" data-p="${path}" data-k="${k}">${opt.map(o=>`<option${o===val?' selected':''}>${esc(o)}</option>`).join('')}</select>`;
+ else if(ty==='area')inp=`<textarea id="${id}" data-p="${path}" data-k="${k}">${esc(val)}</textarea>`;
+ else if(ty==='time')inp=`<div class="tw"><input type="time" id="${id}" data-p="${path}" data-k="${k}" value="${esc(val)}"><button class="s" type="button" data-now="${id}">Ora</button></div>`;
+ else inp=`<input type="${ty==='date'?'date':ty==='tel'?'tel':'text'}"${ty==='num'?' inputmode="decimal"':''} id="${id}" data-p="${path}" data-k="${k}" value="${esc(val)}">`;
+ return`<div class="f${w}"><label for="${id}">${esc(lab)}</label>${inp}</div>`;
+}
+function listHTML(k){const c=T.l[k],arr=D.l[k];
+ const items=arr.map((it,i)=>`<div class="item"><h3>${c.n} ${i+1}<button class="s d" type="button" data-del="${k}" data-i="${i}">Elimina</button></h3>${c.f.map(fd=>field(fd,it[fd[0]],k+'.'+i)).join('')}</div>`).join('');
+ return`<details data-l="${k}"${arr.length?' open':''}><summary>${c.t} <span class="cnt">${arr.length||''}</span></summary><div class="body">${items||'<p class="hint">Nessun elemento.</p>'}<div class="addrow"><button type="button" data-add="${k}">+ Aggiungi ${c.n.toLowerCase()}</button></div></div></details>`}
+function secHTML(s){return`<details data-s="${s.id}"${s.open?' open':''}><summary>${s.t}</summary><div class="body">${s.f.map(fd=>field(fd,D.f[s.id+'.'+fd[0]],'f.'+s.id)).join('')}</div></details>`}
+function render(){
+ const open={};$('form').querySelectorAll('details').forEach(d=>open[d.dataset.s||d.dataset.l]=d.open);
+ $('form').innerHTML=order.map(o=>o[0]==='s'?secHTML(o[1]):listHTML(o[1])).join('');
+ $('form').querySelectorAll('details').forEach(d=>{const n=d.dataset.s||d.dataset.l;if(n in open)d.open=open[n]});
+}
+function edit(){
+ T=TPL[D.type];Object.keys(T.l).forEach(k=>{if(!D.l[k])D.l[k]=[]});
+ order=[];T.s.forEach(s=>{order.push(['s',s]);Object.keys(T.l).forEach(k=>{if(T.l[k].after===s.id)order.push(['l',k])})});
+ $('home').hidden=true;$('ed').hidden=false;$('back').hidden=false;$('gen').hidden=false;$('mic').hidden=!SR;
+ $('ttl').textContent=T.n;$('st').textContent=D.exported?'Già esportato':'Salvato sul telefono';
+ ['dph','dsk','dout'].forEach(i=>$(i).open=false);$('out').value='';$('om').textContent='';$('em').textContent="L'esportazione salva un file nella cartella Download con dati, testo, schizzo e foto. Si apre con qualsiasi browser sul computer.";
+ $('form').innerHTML='';render();renderPh();strokes=Array.isArray(D.sk)?D.sk:[];setTimeout(size,0);scrollTo(0,0);
+}
+function setVal(el){const p=el.dataset.p,k=el.dataset.k;if(!p||!D)return;
+ if(p.startsWith('f.'))D.f[p.slice(2)+'.'+k]=el.value;else{const[l,i]=p.split('.');D.l[l][+i][k]=el.value}save()}
+$('form').addEventListener('input',e=>setVal(e.target));
+$('form').addEventListener('change',e=>setVal(e.target));
+$('form').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.now){const el=$(b.dataset.now);el.value=new Date().toTimeString().slice(0,5);setVal(el)}
+ if(b.dataset.add){const k=b.dataset.add;D.l[k].push({});render();$('form').querySelector(`details[data-l="${k}"]`).open=true;save()}
+ if(b.dataset.del){if(b.dataset.arm){D.l[b.dataset.del].splice(+b.dataset.i,1);render();save()}else arm(b,'Elimina')}
+});
+function arm(b,lab){b.dataset.arm=1;b.textContent='Conferma';setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.textContent=lab}},3000)}
+
+// ---------- foto ----------
+const urls=new Map();
+function purl(p){if(!urls.has(p.id))urls.set(p.id,URL.createObjectURL(p.blob));return urls.get(p.id)}
+function renderPh(){
+ PH.sort((a,b)=>a.n-b.n);$('phn').textContent=PH.length||'';
+ $('ph').innerHTML=PH.length?PH.map((p,i)=>`<figure><img src="${purl(p)}" alt="Foto ${i+1}"><figcaption><b>Foto ${i+1} · ${esc(p.t)}</b><input type="text" id="phc-${p.id}" data-cap="${p.id}" placeholder="Didascalia" value="${esc(p.c)}"><button class="s d" data-phd="${p.id}">Elimina</button></figcaption></figure>`).join(''):'<p class="hint">Nessuna fotografia. Ogni foto viene numerata e puoi aggiungere una didascalia.</p>';
+}
+let ctm={};
+$('ph').addEventListener('input',e=>{const id=e.target.dataset.cap;if(!id)return;const p=PH.find(x=>x.id===id);p.c=e.target.value;clearTimeout(ctm[id]);ctm[id]=setTimeout(()=>{put('foto',p);save()},400)});
+$('ph').addEventListener('click',async e=>{const b=e.target.closest('[data-phd]');if(!b)return;if(!b.dataset.arm)return arm(b,'Elimina');
+ const id=b.dataset.phd;PH=PH.filter(x=>x.id!==id);await del('foto',id);renderPh();save()});
+function shrink(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),img=new Image();img.onload=()=>{const k=Math.min(1,2000/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?res(b):rej(),'image/jpeg',.85)};img.onerror=()=>{URL.revokeObjectURL(u);rej()};img.src=u})}
+async function addFiles(files){
+ files=[...files].filter(f=>f.type.startsWith('image/'));let n=0;
+ for(const f of files){$('phm').textContent=`Salvo ${n+1} di ${files.length}…`;
+  let b;try{b=await shrink(f)}catch(e){b=f}
+  const p={id:nid(),vid:D.id,n:Date.now()+n,blob:b,c:'',t:new Date().toTimeString().slice(0,5)};
+  try{await put('foto',p);PH.push(p);n++}catch(e){$('phm').textContent='Spazio esaurito sul telefono.';break}}
+ renderPh();save();if(n)$('phm').textContent=n===1?'Foto aggiunta.':n+' foto aggiunte.';$('dph').open=true;
+}
+['cam','gal'].forEach(i=>$(i).addEventListener('change',e=>{addFiles(e.target.files);e.target.value=''}));
+
+// ---------- schizzo ----------
+const cv=$('cv'),cx=cv.getContext('2d');let strokes=[],cur=null,tool='pen';
+function size(){const r=cv.getBoundingClientRect();if(!r.width)return;const dp=devicePixelRatio||1;cv.width=r.width*dp;cv.height=r.height*dp;cx.setTransform(dp,0,0,dp,0,0);drawAll()}
+function drawAll(c=cx,W=cv.getBoundingClientRect().width,H=cv.getBoundingClientRect().height){c.fillStyle='#fff';c.fillRect(0,0,W,H);c.strokeStyle='#e6e9ee';c.lineWidth=1;for(let x=0;x<W;x+=20){c.beginPath();c.moveTo(x,0);c.lineTo(x,H);c.stroke()}for(let y=0;y<H;y+=20){c.beginPath();c.moveTo(0,y);c.lineTo(W,y);c.stroke()}
+ strokes.forEach(s=>{c.strokeStyle=s.t==='rub'?'#fff':'#111';c.lineWidth=s.t==='rub'?18:2.5;c.lineCap='round';c.lineJoin='round';c.beginPath();s.p.forEach((p,i)=>{const X=p[0]*W,Y=p[1]*H;i?c.lineTo(X,Y):c.moveTo(X,Y)});c.stroke()})}
+const pt=e=>{const r=cv.getBoundingClientRect();return[+((e.clientX-r.left)/r.width).toFixed(4),+((e.clientY-r.top)/r.height).toFixed(4)]};
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);cur={t:tool,p:[pt(e)]};strokes.push(cur)});
+cv.addEventListener('pointermove',e=>{if(cur){cur.p.push(pt(e));drawAll()}});
+const endS=()=>{if(cur){cur=null;D.sk=strokes;save()}};cv.addEventListener('pointerup',endS);cv.addEventListener('pointercancel',endS);
+document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{tool=b.dataset.t;document.querySelectorAll('[data-t]').forEach(x=>x.setAttribute('aria-pressed',x===b))});
+$('undo').onclick=()=>{strokes.pop();D.sk=strokes;drawAll();save()};
+$('clr').onclick=e=>{const b=e.currentTarget;if(!b.dataset.arm)return arm(b,'Cancella tutto');strokes=[];D.sk=[];drawAll();save();delete b.dataset.arm;b.textContent='Cancella tutto'};
+$('dsk').addEventListener('toggle',size);new ResizeObserver(size).observe(cv);
+function skPNG(){if(!strokes.length)return'';const c=document.createElement('canvas');c.width=1200;c.height=800;drawAll(c.getContext('2d'),1200,800);return c.toDataURL('image/png')}
+
+// ---------- testo ----------
+function compose(){
+ const out=[],v=x=>(x??'').toString().trim();
+ out.push('VERBALE DI RILIEVO – '+T.n.toUpperCase());
+ order.forEach(o=>{
+  if(o[0]==='s'){const s=o[1],r=s.f.map(fd=>[fd[1],v(D.f[s.id+'.'+fd[0]])]).filter(r=>r[1]);if(r.length){out.push('','== '+s.t.toUpperCase()+' ==');r.forEach(r=>out.push(r[0]+': '+fdate(r[1])))}}
+  else{const k=o[1],c=T.l[k];const its=D.l[k].map((it,i)=>[i,c.f.map(fd=>[fd[1],v(it[fd[0]])]).filter(r=>r[1])]).filter(x=>x[1].length);if(!its.length)return;out.push('','== '+c.t.toUpperCase()+' ==');its.forEach(([i,r])=>{out.push('-- '+c.n.toUpperCase()+' '+(i+1)+' --');r.forEach(r=>out.push(r[0]+': '+fdate(r[1])))})}
+ });
+ if(strokes.length)out.push('','Si allega schizzo dei luoghi.');
+ if(PH.length){out.push('','== FOTOGRAFIE ==','Si allegano n. '+PH.length+' fotografie:');PH.forEach((p,i)=>out.push('Foto '+(i+1)+' ('+p.t+')'+(p.c?': '+p.c:'')))}
+ out.push('','Letto, confermato e sottoscritto.','','Gli operatori ______________________   ______________________');
+ return out.join('\n');
+}
+function gen(){$('out').value=compose();$('dout').open=true;$('dout').scrollIntoView({behavior:'smooth'})}
+$('gen').onclick=gen;$('regen').onclick=gen;
+$('copy').onclick=async()=>{if(!$('out').value)$('out').value=compose();try{await navigator.clipboard.writeText($('out').value);$('om').textContent='Testo copiato.'}catch(e){$('out').select();$('om').textContent='Testo selezionato: usa Copia del telefono.'}};
+$('share').onclick=async()=>{
+ if(!$('out').value)$('out').value=compose();const text=$('out').value;
+ const files=PH.map((p,i)=>new File([p.blob],`foto_${i+1}.jpg`,{type:'image/jpeg'}));
+ try{
+  if(files.length&&navigator.canShare&&navigator.canShare({files}))await navigator.share({title:T.n,text,files});
+  else if(navigator.share)await navigator.share({title:T.n,text});
+  else{await navigator.clipboard.writeText(text);$('om').textContent='Condivisione non disponibile: testo copiato.'}
+ }catch(e){if(e.name!=='AbortError')$('om').textContent='Condivisione non riuscita.'}
+};
+
+// ---------- esportazione ----------
+const b64=blob=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(blob)});
+async function exportOne(v,ph){
+ const t=TPL[v.type];const prevD=D,prevT=T,prevO=order,prevS=strokes,prevP=PH;
+ D=v;T=t;PH=ph;strokes=Array.isArray(v.sk)?v.sk:[];order=[];t.s.forEach(s=>{order.push(['s',s]);Object.keys(t.l).forEach(k=>{if(!D.l[k])D.l[k]=[];if(t.l[k].after===s.id)order.push(['l',k])})});
+ const text=compose(),sk=skPNG();
+ const imgs=[];for(const[i,p]of ph.entries())imgs.push({n:i+1,t:p.t,c:p.c,src:await b64(p.blob)});
+ D=prevD;T=prevT;order=prevO;strokes=prevS;PH=prevP;
+ const data={app:'rilievi-ferroviari',versione:1,esportato:new Date().toISOString(),verbale:{id:v.id,type:v.type,tipo:t.n,created:v.created,updated:v.updated,f:v.f,l:v.l,sk:Array.isArray(v.sk)?v.sk:[]},foto:imgs.map(x=>({n:x.n,ora:x.t,didascalia:x.c}))};
+ const html=`<!DOCTYPE html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(t.n)} – ${esc(titleOf(v))}</title><style>body{font:15px/1.5 system-ui,sans-serif;max-width:860px;margin:24px auto;padding:0 16px;color:#111}pre{white-space:pre-wrap;font:14px/1.5 ui-monospace,Consolas,monospace;background:#f5f6f8;padding:14px;border-radius:8px}img{max-width:100%;border:1px solid #ccc;border-radius:6px}figure{margin:16px 0;break-inside:avoid}figcaption{font-size:13px;color:#444}@media print{pre{background:none}}</style></head><body><h1 style="font-size:20px">${esc(t.n)}</h1><p>${esc(titleOf(v))}<br><small>Esportato il ${new Date().toLocaleString('it-IT')}</small></p><pre>${esc(text)}</pre>${sk?`<h2 style="font-size:17px">Schizzo dei luoghi</h2><img src="${sk}" alt="Schizzo">`:''}${imgs.length?'<h2 style="font-size:17px">Fotografie</h2>'+imgs.map(x=>`<figure><img src="${x.src}" alt="Foto ${x.n}"><figcaption>Foto ${x.n} (${esc(x.t)})${x.c?': '+esc(x.c):''}</figcaption></figure>`).join(''):''}<script type="application/json" id="dati-verbale">${JSON.stringify(data).replace(/</g,'\\u003c')}<\/script></body></html>`;
+ const prot=(v.f['int.prot']||'').trim().replace(/[^A-Za-z0-9-]+/g,'-').replace(/^-+|-+$/g,'');
+ const name=`verbale_${(v.f['int.data']||today())}_${v.type}_${prot?'prot-'+prot:v.id.slice(-5)}.html`;
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);
+ v.exported=true;await put('verbali',v);return name;
+}
+$('exp').onclick=async()=>{clearTimeout(tm);D.updated=Date.now();try{const n=await exportOne(D,PH);$('st').textContent='Esportato';$('em').textContent='Salvato in Download: '+n+'. Dopo averlo copiato in ufficio puoi eliminarlo dal telefono.'}catch(e){$('em').textContent='Esportazione non riuscita.'}};
+async function removeV(id){for(const p of await fotoDi(id))await del('foto',p.id);await del('verbali',id)}
+$('del').onclick=async e=>{const b=e.currentTarget;
+ if(!b.dataset.arm){b.dataset.arm=1;b.textContent=D.exported?'Conferma eliminazione':'Non esportato! Conferma';$('em').textContent=D.exported?'Il verbale e le sue foto verranno cancellati da questo telefono.':'Attenzione: questo verbale non è stato esportato e andrà perso.';setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.textContent='Elimina dal telefono'}},4000);return}
+ delete b.dataset.arm;b.textContent='Elimina dal telefono';clearTimeout(tm);await removeV(D.id);urls.forEach(u=>URL.revokeObjectURL(u));urls.clear();home();$('hm').textContent='Verbale eliminato dal telefono.'};
+$('expAll').onclick=async()=>{const all=(await getAll('verbali')).filter(v=>!v.exported);if(!all.length){$('hm').textContent='Nessun verbale da esportare.';return}for(const v of all){await exportOne(v,await fotoDi(v.id));await new Promise(r=>setTimeout(r,700))}$('hm').textContent=all.length+' file salvati in Download.';home()};
+$('delExp').onclick=async e=>{const b=e.currentTarget;const ex=(await getAll('verbali')).filter(v=>v.exported);if(!ex.length){$('hm').textContent='Nessun verbale esportato da eliminare.';return}
+ if(!b.dataset.arm){b.dataset.arm=1;b.textContent=`Conferma: elimina ${ex.length}`;setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.textContent='Elimina gli esportati'}},4000);return}
+ for(const v of ex)await removeV(v.id);delete b.dataset.arm;b.textContent='Elimina gli esportati';await home();$('hm').textContent=ex.length+' verbali eliminati dal telefono.'};
+
+// ---------- importazione ----------
+async function importFile(file){
+ const txt=await file.text();
+ const doc=new DOMParser().parseFromString(txt,'text/html');
+ const js=doc.getElementById('dati-verbale');if(!js)throw new Error('Non è un file esportato da questa app');
+ const data=JSON.parse(js.textContent);const v=data.verbale;
+ if(!v||!TPL[v.type])throw new Error('Tipo di verbale sconosciuto');
+ const old=await P(tx('verbali').get(v.id));
+ const rec={id:v.id,type:v.type,created:v.created||Date.now(),updated:Date.now(),exported:true,f:v.f||{},l:v.l||{},sk:Array.isArray(v.sk)?v.sk:[]};
+ for(const p of await fotoDi(v.id))await del('foto',p.id);
+ const imgs=[...doc.querySelectorAll('figure img')];
+ for(const[i,meta]of(data.foto||[]).entries()){
+  const im=imgs.find(x=>x.alt==='Foto '+meta.n)||imgs[i];if(!im)continue;
+  const blob=await (await fetch(im.getAttribute('src'))).blob();
+  await put('foto',{id:nid(),vid:v.id,n:i,blob,c:meta.didascalia||'',t:meta.ora||''});
+ }
+ await put('verbali',rec);
+ return old?'aggiornato':'importato';
+}
+$('imp').addEventListener('change',async e=>{
+ const files=[...e.target.files];e.target.value='';if(!files.length)return;
+ let ok=0,errs=[];
+ for(const f of files){try{await importFile(f);ok++}catch(err){errs.push(f.name+': '+(err.message||'file non valido'))}}
+ await home();
+ $('hm').textContent=(ok?(ok===1?'1 verbale riaperto':ok+' verbali riaperti')+': tocca Apri per completarlo. ':'')+(errs.length?'Non importati: '+errs.join('; '):'');
+});
+
+// ---------- dettatura (riconoscimento vocale di Chrome) ----------
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let tgt=null,rec=null,base='';
+const okT=el=>el&&el.matches&&el.matches('#form input[type=text],#form input[type=tel],#form textarea,#ph input,#out');
+document.addEventListener('focusin',e=>{if(okT(e.target)&&!rec)tgt=e.target});
+if(SR)$('mh').textContent='Per dettare tocca un campo e poi il microfono rosso in alto (serve la connessione), oppure usa il microfono della tastiera.';
+$('mic').onclick=()=>{
+ if(rec){rec.stop();return}
+ if(!tgt||!tgt.isConnected){$('st').textContent='Tocca prima il campo in cui vuoi dettare.';return}
+ rec=new SR();rec.lang='it-IT';rec.interimResults=true;rec.continuous=true;base=tgt.value.trim();
+ rec.onresult=e=>{let fin='',tmp='';for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];r.isFinal?fin+=r[0].transcript:tmp+=r[0].transcript}if(fin)base=(base+' '+fin.trim()).trim();tgt.value=(base+' '+tmp).trim();if(fin)tgt.dispatchEvent(new Event('input',{bubbles:true}))};
+ rec.onend=()=>{rec=null;$('mic').classList.remove('on');tgt&&tgt.classList.remove('tgt');tgt&&tgt.dispatchEvent(new Event('input',{bubbles:true}));$('st').textContent='Dettatura terminata'};
+ rec.onerror=e=>{$('st').textContent=e.error==='not-allowed'?'Microfono non consentito: abilitalo nelle impostazioni del sito.':e.error==='network'?'Dettatura non disponibile senza rete: usa il microfono della tastiera.':'Dettatura interrotta.'};
+ try{rec.start();$('mic').classList.add('on');tgt.classList.add('tgt');$('st').textContent='Ti ascolto… tocca il microfono per fermare.'}catch(e){rec=null}
+};
+
+// ---------- avvio ----------
+openDB().then(d=>{idb=d;home()}).catch(()=>{$('vl').innerHTML='<p class="hint">Archivio del telefono non disponibile: apri l\'app da Chrome, non in modalità anonima.</p>'});
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>
